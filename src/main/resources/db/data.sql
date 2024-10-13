@@ -18,4 +18,4 @@ INSERT INTO user (name, email, phone) VALUES ('Melissa lopez', 'melissa.lopez@gm
 
 -- Insertar adopciones
 INSERT INTO adoption (pet_id, user_id, adoption_date) VALUES (4, 2, '2023-09-15');
-INSERT INTO adoption (pet_id, user_id, adoption_date) VALUES(2, 1, '2023-10-01'); -- Miau fue adoptado por Juan Pérez
+INSERT INTO adoption (pet_id, user_id, adoption_date) VALUES(2, 1, '2023-10-01');
