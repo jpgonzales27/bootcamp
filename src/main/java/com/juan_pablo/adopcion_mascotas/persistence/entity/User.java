@@ -2,6 +2,8 @@ package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class User {
 
@@ -17,6 +19,9 @@ public class User {
 
     @Column(nullable = false)
     private String phone;
+
+    @OneToMany(mappedBy = "user")
+    private List<Adoption> adoptions;
 
     public Long getId() {
         return id;
@@ -48,5 +53,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Adoption> getAdoptions() {
+        return adoptions;
+    }
+
+    public void setAdoptions(List<Adoption> adoptions) {
+        this.adoptions = adoptions;
     }
 }

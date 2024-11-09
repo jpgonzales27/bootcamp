@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -13,10 +14,12 @@ public class Adoption {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
+    @JsonIgnore
     private Pet pet;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Temporal(TemporalType.DATE)

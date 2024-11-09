@@ -2,6 +2,8 @@ package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Pet {
 
@@ -12,7 +14,7 @@ public class Pet {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "petType_id")
     private PetType petType;
 
@@ -21,6 +23,9 @@ public class Pet {
 
     @Column(nullable = false)
     private Boolean available;
+
+    @OneToMany(mappedBy = "pet")
+    private List<Adoption> adoptions;
 
     public Long getId() {
         return id;
@@ -60,5 +65,13 @@ public class Pet {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public List<Adoption> getAdoptions() {
+        return adoptions;
+    }
+
+    public void setAdoptions(List<Adoption> adoptions) {
+        this.adoptions = adoptions;
     }
 }
