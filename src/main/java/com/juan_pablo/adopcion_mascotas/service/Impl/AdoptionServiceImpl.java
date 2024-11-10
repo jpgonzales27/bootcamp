@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.service.Impl;
 
+import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Adoption;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.AdoptionCrudRepository;
 import com.juan_pablo.adopcion_mascotas.service.AdoptionService;
@@ -20,7 +21,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 
     @Override
     public Adoption findAdoptionById(Long id) {
-        return adoptionCrudRepository.findById(id).orElseThrow();
+        return adoptionCrudRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("[Adoption: " + Long.toString(id) + "]"));
     }
 
     @Override
@@ -30,7 +31,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 
     @Override
     public Adoption updateAdoptionById(Long id, Adoption adoption) {
-        Adoption oldAdoption = adoptionCrudRepository.findById(id).orElseThrow();
+        Adoption oldAdoption = this.findAdoptionById(id);
         oldAdoption.setPet(adoption.getPet());
         oldAdoption.setUser(adoption.getUser());
         oldAdoption.setAdoptionDate(adoption.getAdoptionDate());
@@ -39,7 +40,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 
     @Override
     public void deleteAdoptionById(Long id) {
-        Adoption exist = adoptionCrudRepository.findById(id).orElseThrow();
+        Adoption exist = this.findAdoptionById(id);
         adoptionCrudRepository.delete(exist);
     }
 }

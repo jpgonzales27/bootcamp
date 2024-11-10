@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.service.Impl;
 
+import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudRepository;
 import com.juan_pablo.adopcion_mascotas.service.PetTypeService;
@@ -21,7 +22,7 @@ public class PetTypeServiceImpl implements PetTypeService {
 
     @Override
     public PetType findPetTypeById(Long id) {
-        return petTypeCrudRepository.findById(id).orElseThrow();
+        return petTypeCrudRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("[Adoption: " + Long.toString(id) + "]"));
     }
 
     @Override
@@ -31,14 +32,14 @@ public class PetTypeServiceImpl implements PetTypeService {
 
     @Override
     public PetType updatePetTypeById(Long id, PetType petType) {
-        PetType oldPetType = petTypeCrudRepository.findById(id).orElseThrow();
+        PetType oldPetType = this.findPetTypeById(id);
         oldPetType.setTypeName(petType.getTypeName());
         return petTypeCrudRepository.save(oldPetType);
     }
 
     @Override
     public void deletePetTypeById(Long id) {
-        PetType exits = petTypeCrudRepository.findById(id).orElseThrow();
+        PetType exits = this.findPetTypeById(id);
         petTypeCrudRepository.delete(exits);
     }
 }
