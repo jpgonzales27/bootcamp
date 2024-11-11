@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.controller;
 
+import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.service.PetTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,12 @@ public class PetTypeController {
     }
 
     @GetMapping("/{id}")
-    public PetType getUserById(@PathVariable Long id){
-        return petTypeService.findPetTypeById(id);
+    public ResponseEntity<PetType> getUserById(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(petTypeService.findPetTypeById(id));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping()
@@ -32,12 +37,20 @@ public class PetTypeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PetType> updateUser(@PathVariable Long id, @RequestBody PetType petType) {
-        return ResponseEntity.ok(petTypeService.updatePetTypeById(id, petType));
+        try {
+            return ResponseEntity.ok(petTypeService.updatePetTypeById(id, petType));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        petTypeService.deletePetTypeById(id);
-        return ResponseEntity.noContent().build();
+        try {
+            petTypeService.deletePetTypeById(id);
+            return ResponseEntity.noContent().build();
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

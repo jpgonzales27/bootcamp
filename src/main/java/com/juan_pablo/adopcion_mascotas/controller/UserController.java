@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.controller;
 
+import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
@@ -22,8 +23,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id){
-        return userService.findUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(userService.findUserById(id));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping()
@@ -33,12 +38,20 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUserById(id, user));
+        try {
+            return ResponseEntity.ok(userService.updateUserById(id, user));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+        try {
+            userService.deleteUserById(id);
+            return ResponseEntity.noContent().build();
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
