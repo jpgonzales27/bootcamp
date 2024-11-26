@@ -5,6 +5,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,23 @@ public class PetController {
     private PetService petService;
 
     @GetMapping()
-    public List<Pet> getPets() {
-        return petService.findAllPets();
+    public List<Pet> getPets(@RequestParam(required = false) String name,
+                             @RequestParam(required = false) String petType,
+                             @RequestParam(required = false) Boolean available) {
+
+        List<Pet> pets = null;
+
+        if(StringUtils.hasText(name)) {
+            pets = petService.findAllByName(name);
+        } else if (StringUtils.hasText(petType)){
+            pets = petService.findAllByPetTypeTypeName(petType);
+        } else if(available != null){
+            pets = petService.findByAvailability(available);
+        } else {
+            pets = petService.findAllPets();
+        }
+
+        return pets;
     }
 
     @GetMapping("/pet/{id}")
@@ -28,21 +44,6 @@ public class PetController {
         } catch (ObjectNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("/{name}")
-    public List<Pet> getPetByName(@PathVariable String name) {
-        return petService.findAllByName(name);
-    }
-
-    @GetMapping("/type/{petType}")
-    public List<Pet> getPetByPetType(@PathVariable String petType) {
-        return petService.findAllByPetTypeTypeName(petType);
-    }
-
-    @GetMapping("/available/{available}")
-    public List<Pet> getPetByPetAvailable(@PathVariable Boolean available) {
-        return petService.findByAvailability(available);
     }
 
     @PostMapping()
