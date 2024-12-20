@@ -2,58 +2,41 @@ package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Adoption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "pet_id",nullable = false)
+    private Long petId;
+
+    @Column(name = "user_id",nullable = false)
+    private Long userId;
+
     @ManyToOne
-    @JoinColumn(name = "pet_id")
+    @JoinColumn(name = "pet_id", insertable = false, updatable = false)
     @JsonIgnore
     private Pet pet;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     @JsonIgnore
     private User user;
 
     @Temporal(TemporalType.DATE)
     private Date adoptionDate;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Pet getPet() {
-        return pet;
-    }
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Date getAdoptionDate() {
-        return adoptionDate;
-    }
-
-    public void setAdoptionDate(Date adoptionDate) {
-        this.adoptionDate = adoptionDate;
-    }
 }
