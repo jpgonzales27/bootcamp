@@ -3,11 +3,13 @@ package com.juan_pablo.adopcion_mascotas.controller;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -18,7 +20,7 @@ public class PetController {
     private PetService petService;
 
     @GetMapping()
-    public List<Pet> getPets(@RequestParam(required = false) String name,
+    public ResponseEntity<List<Pet>> getPets(@RequestParam(required = false) String name,
                              @RequestParam(required = false) String petType,
                              @RequestParam(required = false) Boolean available) {
 
@@ -34,7 +36,7 @@ public class PetController {
             pets = petService.findAllPets();
         }
 
-        return pets;
+        return ResponseEntity.ok(pets);
     }
 
     @GetMapping("/pet/{id}")
@@ -47,8 +49,13 @@ public class PetController {
     }
 
     @PostMapping()
-    public ResponseEntity<Pet> createPet(@RequestBody Pet pet) {
-        return ResponseEntity.ok(petService.savePet(pet));
+    public ResponseEntity<Pet> createPet(@RequestBody Pet pet, HttpServletRequest request) {
+
+        Pet petCreated = petService.savePet(pet);
+        String baseUrl = request.getRequestURL().toString();
+        URI newLocation = URI.create(baseUrl + "/" + petCreated.getId());
+
+        return ResponseEntity.created(newLocation).body(petCreated);
     }
 
     @PutMapping("/{id}")
