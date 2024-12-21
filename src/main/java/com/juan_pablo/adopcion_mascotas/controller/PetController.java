@@ -5,6 +5,7 @@ import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -50,7 +51,7 @@ public class PetController {
     }
 
     @PostMapping()
-    public ResponseEntity<GetPetDTO> createPet(@RequestBody Pet pet, HttpServletRequest request) {
+    public ResponseEntity<GetPetDTO> createPet(@Valid @RequestBody Pet pet, HttpServletRequest request) {
 
         GetPetDTO petCreated = petService.savePet(pet);
         String baseUrl = request.getRequestURL().toString();
@@ -60,7 +61,7 @@ public class PetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pet> updatePet(@PathVariable Long id, @RequestBody Pet pet) {
+    public ResponseEntity<Pet> updatePet(@PathVariable Long id,@Valid @RequestBody Pet pet) {
         try {
             return ResponseEntity.ok(petService.updatePetById(id, pet));
         } catch (ObjectNotFoundException e) {

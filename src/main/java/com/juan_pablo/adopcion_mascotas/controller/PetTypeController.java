@@ -6,6 +6,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.service.PetTypeService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class PetTypeController {
     }
 
     @PostMapping()
-    public ResponseEntity<PetType> createType(@RequestBody PetType petType, HttpServletRequest request) {
+    public ResponseEntity<PetType> createType(@Valid @RequestBody PetType petType, HttpServletRequest request) {
         PetType petTypeCreated = petTypeService.savePetType(petType);
         String baseUrl = request.getRequestURL().toString();
         URI newLocation = URI.create(baseUrl + "/" + petTypeCreated.getId());
@@ -44,7 +45,7 @@ public class PetTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PetType> updateType(@PathVariable Long id, @RequestBody PetType petType) {
+    public ResponseEntity<PetType> updateType(@PathVariable Long id,@Valid  @RequestBody PetType petType) {
         try {
             return ResponseEntity.ok(petTypeService.updatePetTypeById(id, petType));
         } catch (ObjectNotFoundException e) {

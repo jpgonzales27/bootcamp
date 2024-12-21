@@ -5,6 +5,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.Adoption;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.service.AdoptionService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class AdoptionController {
     }
 
     @PostMapping()
-    public ResponseEntity<Adoption> createAdoption(@RequestBody Adoption adoption, HttpServletRequest request) {
+    public ResponseEntity<Adoption> createAdoption(@Valid @RequestBody Adoption adoption, HttpServletRequest request) {
 
         Adoption adoptionCreated = adoptionService.saveAdoption(adoption);
         String baseUrl = request.getRequestURL().toString();
@@ -43,7 +44,7 @@ public class AdoptionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Adoption> updateAdoption(@PathVariable Long id, @RequestBody Adoption adoption) {
+    public ResponseEntity<Adoption> updateAdoption(@PathVariable Long id,@Valid @RequestBody Adoption adoption) {
         try {
             return ResponseEntity.ok(adoptionService.updateAdoptionById(id, adoption));
         } catch (ObjectNotFoundException e) {

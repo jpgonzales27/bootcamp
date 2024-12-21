@@ -1,6 +1,9 @@
 package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +22,8 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message ="{generic.notblank}" )
+    @Size(min = 1, max = 255,message = "{generic.size}")
     @Column(nullable = false)
     private String name;
 
@@ -27,6 +32,7 @@ public class Pet {
     private PetType petType;
 
     @Column(nullable = false)
+    @PositiveOrZero
     private Integer age;
 
     @Column(nullable = false)

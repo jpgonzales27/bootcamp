@@ -5,6 +5,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<User> createUser(@Valid  @RequestBody User user, HttpServletRequest request) {
         User userCreated = userService.saveUser(user);
         String baseUrl = request.getRequestURL().toString();
         URI newLocation = URI.create(baseUrl + "/" + userCreated.getId());
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id,@Valid @RequestBody User user) {
         try {
             return ResponseEntity.ok(userService.updateUserById(id, user));
         } catch (ObjectNotFoundException e) {
