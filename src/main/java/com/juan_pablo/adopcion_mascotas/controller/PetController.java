@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.controller;
 
+import com.juan_pablo.adopcion_mascotas.dto.response.GetPetDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
@@ -49,9 +50,9 @@ public class PetController {
     }
 
     @PostMapping()
-    public ResponseEntity<Pet> createPet(@RequestBody Pet pet, HttpServletRequest request) {
+    public ResponseEntity<GetPetDTO> createPet(@RequestBody Pet pet, HttpServletRequest request) {
 
-        Pet petCreated = petService.savePet(pet);
+        GetPetDTO petCreated = petService.savePet(pet);
         String baseUrl = request.getRequestURL().toString();
         URI newLocation = URI.create(baseUrl + "/" + petCreated.getId());
 

@@ -1,20 +1,26 @@
 package com.juan_pablo.adopcion_mascotas.service.Impl;
 
+import com.juan_pablo.adopcion_mascotas.dto.response.GetPetDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
+import com.juan_pablo.adopcion_mascotas.mapper.PetMapper;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetCrudRepository;
+import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudRepository;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
 
-    @Autowired
-    private PetCrudRepository petCrudRepository;
+    private final PetCrudRepository petCrudRepository;
+    private final PetTypeCrudRepository petTypeRepository;
+//    private final PetMapper petMapper;
 
     @Override
     public List<Pet> findAllPets() {
@@ -44,8 +50,13 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Pet savePet(Pet pet) {
-        return petCrudRepository.save(pet);
+    public GetPetDTO savePet(Pet pet) {
+        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
+                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
+
+        pet.setPetType(petType);
+        Pet result = petCrudRepository.save(pet);
+        return PetMapper.INSTANCE.fromEntityToDto(result);
     }
 
     @Override
