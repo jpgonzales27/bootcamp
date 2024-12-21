@@ -1,10 +1,12 @@
 package com.juan_pablo.adopcion_mascotas.controller;
 
+import com.juan_pablo.adopcion_mascotas.dto.response.GetPetTypeDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.service.PetTypeService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +16,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/type")
+@RequiredArgsConstructor
 public class PetTypeController {
 
-    @Autowired
-    private PetTypeService petTypeService;
+    private final PetTypeService petTypeService;
 
     @GetMapping()
-    public List<PetType> getUsers() {
+    public List<GetPetTypeDTO> getPetType() {
         return petTypeService.findAllPetTypes();
     }
 
