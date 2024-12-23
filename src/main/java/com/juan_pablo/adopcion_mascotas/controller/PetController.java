@@ -22,21 +22,16 @@ public class PetController {
     private PetService petService;
 
     @GetMapping()
-    public ResponseEntity<List<Pet>> getPets(@RequestParam(required = false) String name,
-                             @RequestParam(required = false) String petType,
-                             @RequestParam(required = false) Boolean available) {
+    public ResponseEntity<List<Pet>> getPets(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long typeId,
+            @RequestParam(required = false) String typeName,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) Boolean available
+    ) {
 
-        List<Pet> pets = null;
-
-        if(StringUtils.hasText(name)) {
-            pets = petService.findAllByName(name);
-        } else if (StringUtils.hasText(petType)){
-            pets = petService.findAllByPetTypeTypeName(petType);
-        } else if(available != null){
-            pets = petService.findByAvailability(available);
-        } else {
-            pets = petService.findAllPets();
-        }
+        List<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,available);
 
         return ResponseEntity.ok(pets);
     }

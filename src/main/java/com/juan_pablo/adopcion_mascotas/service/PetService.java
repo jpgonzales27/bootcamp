@@ -7,10 +7,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import java.util.List;
 
 public interface PetService {
-    List<Pet> findAllPets();
-    List<Pet> findAllByName(String name);
-    List<Pet> findAllByPetTypeTypeName(String typeName);
-    List<Pet> findByAvailability(Boolean available);
+    List<Pet> findAllPets(String name, Long typeId,String typeName, Integer minAge, Integer maxAge, Boolean available);
     Pet findPetById( Long id );
     GetPetDTO savePet(Pet pet );
     Pet updatePetById( Long id, Pet pet );

@@ -7,6 +7,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudRepository;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +24,9 @@ public class PetServiceImpl implements PetService {
 //    private final PetMapper petMapper;
 
     @Override
-    public List<Pet> findAllPets() {
-        return petCrudRepository.findAll();
-    }
-
-    @Override
-    public List<Pet> findAllByName(String name) {
-        return petCrudRepository.findAllByName(name);
-    }
-
-    @Override
-    public List<Pet> findAllByPetTypeTypeName(String typeName) {
-        return petCrudRepository.findAllByPetTypeTypeName(typeName);
-    }
-
-    @Override
-    public List<Pet> findByAvailability(Boolean available) {
-        return petCrudRepository.findByAvailable(available);
+    public List<Pet> findAllPets(String name, Long typeId,String typeName, Integer minAge, Integer maxAge, Boolean available) {
+        PetSpecifications petSpecifications = new PetSpecifications(name, typeId,typeName, minAge, maxAge, available);
+        return petCrudRepository.findAll(petSpecifications);
     }
 
     @Override
