@@ -4,8 +4,12 @@ import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.UserCrudRepository;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.UserSpecifications;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +20,9 @@ public class UserServiceImpl implements UserService {
     private UserCrudRepository userCrudRepository;
 
     @Override
-    public List<User> findAllUsers() {
-        return userCrudRepository.findAll();
+    public Page<User> findAllUsers(String name, String email, Pageable pageable) {
+        UserSpecifications petSpecifications = new UserSpecifications(name, email);
+        return userCrudRepository.findAll(petSpecifications,pageable);
     }
 
     @Override
