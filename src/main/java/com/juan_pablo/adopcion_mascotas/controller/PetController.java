@@ -7,6 +7,8 @@ import com.juan_pablo.adopcion_mascotas.service.PetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +24,17 @@ public class PetController {
     private PetService petService;
 
     @GetMapping()
-    public ResponseEntity<List<Pet>> getPets(
+    public ResponseEntity<Page<Pet>> getPets(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long typeId,
             @RequestParam(required = false) String typeName,
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge,
-            @RequestParam(required = false) Boolean available
+            @RequestParam(required = false) Boolean available,
+            Pageable petPageable
     ) {
 
-        List<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,available);
+        Page<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,available,petPageable);
 
         return ResponseEntity.ok(pets);
     }

@@ -11,6 +11,8 @@ import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecificat
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,9 +26,9 @@ public class PetServiceImpl implements PetService {
 //    private final PetMapper petMapper;
 
     @Override
-    public List<Pet> findAllPets(String name, Long typeId,String typeName, Integer minAge, Integer maxAge, Boolean available) {
+    public Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Boolean available, Pageable pageable) {
         PetSpecifications petSpecifications = new PetSpecifications(name, typeId,typeName, minAge, maxAge, available);
-        return petCrudRepository.findAll(petSpecifications);
+        return petCrudRepository.findAll(petSpecifications,pageable);
     }
 
     @Override
