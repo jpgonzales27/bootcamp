@@ -5,11 +5,11 @@ INSERT INTO pet_type (type_name) VALUES ('Conejo');
 INSERT INTO pet_type (type_name) VALUES ('Ave');
 
 -- Insertar mascotas
-INSERT INTO pet (name, age, available, pet_type_id) VALUES ('Dogui', 3, true, 1);
-INSERT INTO pet (name, age, available, pet_type_id) VALUES ('Mila', 2, true, 2);
-INSERT INTO pet (name, age, available, pet_type_id) VALUES ('Nala', 1, true, 3);
-INSERT INTO pet (name, age, available, pet_type_id) VALUES ('Scooby', 4, false, 4);
-INSERT INTO pet (name, age, available, pet_type_id) VALUES ('Kaiser', 5, true, 1);
+INSERT INTO pet (name, age,genre, available, pet_type_id) VALUES ('Dogui', 3,'MALE', true, 1);
+INSERT INTO pet (name, age,genre, available, pet_type_id) VALUES ('Mila', 2,'FEMALE', true, 2);
+INSERT INTO pet (name, age,genre, available, pet_type_id) VALUES ('Nala', 1,'FEMALE', true, 3);
+INSERT INTO pet (name, age,genre, available, pet_type_id) VALUES ('Scooby', 4,'MALE', false, 4);
+INSERT INTO pet (name, age,genre, available, pet_type_id) VALUES ('Kaiser', 5,'FEMALE', true, 1);
 
 -- Insertar usuarios
 INSERT INTO user (name, email, phone) VALUES ('Juan Gonzales', 'juan.gonzales@gmail.com', '555-1234');

@@ -5,6 +5,7 @@ import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.mapper.PetMapper;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
+import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
@@ -23,11 +24,10 @@ public class PetServiceImpl implements PetService {
 
     private final PetCrudRepository petCrudRepository;
     private final PetTypeCrudRepository petTypeRepository;
-//    private final PetMapper petMapper;
 
     @Override
-    public Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Boolean available, Pageable pageable) {
-        PetSpecifications petSpecifications = new PetSpecifications(name, typeId,typeName, minAge, maxAge, available);
+    public Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available, Pageable pageable) {
+        PetSpecifications petSpecifications = new PetSpecifications(name, typeId,typeName, minAge, maxAge,genre, available);
         return petCrudRepository.findAll(petSpecifications,pageable);
     }
 

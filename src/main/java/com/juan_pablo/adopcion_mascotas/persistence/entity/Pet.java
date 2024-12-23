@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.persistence.entity;
 
+import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -34,6 +35,10 @@ public class Pet {
     @Column(nullable = false)
     @PositiveOrZero
     private Integer age;
+
+    @NotBlank(message ="{generic.notblank}" )
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
 
     @Column(nullable = false)
     private Boolean available;

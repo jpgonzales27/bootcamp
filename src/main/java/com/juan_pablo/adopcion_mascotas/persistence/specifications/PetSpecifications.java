@@ -1,6 +1,7 @@
 package com.juan_pablo.adopcion_mascotas.persistence.specifications;
 
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
+import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -17,14 +18,16 @@ public class PetSpecifications implements Specification<Pet> {
     private final String typeName;
     private final Integer minAge;
     private final Integer maxAge;
+    private final Genre genre;
     private final Boolean available;
 
-    public PetSpecifications(String name, Long typeId,String typeName, Integer minAge, Integer maxAge, Boolean available) {
+    public PetSpecifications(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available) {
         this.name = name;
         this.typeId = typeId;
         this.typeName = typeName;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.genre = genre;
         this.available = available;
     }
 
@@ -64,6 +67,12 @@ public class PetSpecifications implements Specification<Pet> {
         if (this.maxAge != null) {
             Predicate ageLessThanOrEqual = criteriaBuilder.lessThanOrEqualTo(root.get("age"), this.maxAge);
             predicates.add(ageLessThanOrEqual);
+        }
+
+        if(genre!=null){
+            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.genre);
+            //m.genre = "this.genre"
+            predicates.add(genreEqual);
         }
 
         // Filtrar por disponibilidad

@@ -3,6 +3,7 @@ package com.juan_pablo.adopcion_mascotas.controller;
 import com.juan_pablo.adopcion_mascotas.dto.response.GetPetDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
+import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,11 +31,12 @@ public class PetController {
             @RequestParam(required = false) String typeName,
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) Genre genre,
             @RequestParam(required = false) Boolean available,
             Pageable petPageable
     ) {
 
-        Page<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,available,petPageable);
+        Page<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,genre,available,petPageable);
 
         return ResponseEntity.ok(pets);
     }
