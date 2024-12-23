@@ -23,10 +23,12 @@ public class UserController {
     private UserService userService;
 
     @GetMapping()
-    public Page<User> getUsers(@RequestParam(required = false) String name,
+    public ResponseEntity<Page<User>> getUsers(@RequestParam(required = false) String name,
                                @RequestParam(required = false) String email,
                                Pageable userPageable) {
-        return userService.findAllUsers(name,email,userPageable);
+        Page<User> users = userService.findAllUsers(name,email,userPageable);
+
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
