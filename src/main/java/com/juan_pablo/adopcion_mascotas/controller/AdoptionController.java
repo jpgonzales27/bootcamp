@@ -2,15 +2,20 @@ package com.juan_pablo.adopcion_mascotas.controller;
 
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Adoption;
+import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.service.AdoptionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -21,8 +26,14 @@ public class AdoptionController {
     private AdoptionService adoptionService;
 
     @GetMapping
-    public List<Adoption> getAdoptions(){
-        return adoptionService.findAllAdoptions();
+    public ResponseEntity<Page<Adoption>> getAdoptions(
+            @RequestParam(required = false) LocalDate exactDate,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            Pageable pageable){
+        Page<Adoption> adoptions = adoptionService.findAllAdoptions(exactDate, startDate, endDate,pageable);
+
+        return ResponseEntity.ok(adoptions);
     }
 
     @GetMapping("/{id}")
