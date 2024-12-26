@@ -5,6 +5,8 @@ import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mascotas")
+@Tag(name = "Pets")
 public class PetController {
 
     @Autowired
     private PetService petService;
 
+    @Operation(summary = "Get all pets", description = "Retrieve a paginated list of all pets available in the system.")
     @GetMapping()
     public ResponseEntity<Page<Pet>> getPets(
             @RequestParam(required = false) String name,
@@ -40,7 +44,7 @@ public class PetController {
 
         return ResponseEntity.ok(pets);
     }
-
+    @Operation(summary = "Get pet by ID", description = "Retrieve details of a pet by its unique ID.")
     @GetMapping("/pet/{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable Long id) {
         try {
@@ -50,6 +54,7 @@ public class PetController {
         }
     }
 
+    @Operation(summary = "Create a new pet", description = "Add a new pet to the system.")
     @PostMapping()
     public ResponseEntity<GetPetDTO> createPet(@Valid @RequestBody Pet pet, HttpServletRequest request) {
 
@@ -60,6 +65,7 @@ public class PetController {
         return ResponseEntity.created(newLocation).body(petCreated);
     }
 
+    @Operation(summary = "Update a pet by ID", description = "Update the details of an existing pet by its unique ID.")
     @PutMapping("/{id}")
     public ResponseEntity<Pet> updatePet(@PathVariable Long id,@Valid @RequestBody Pet pet) {
         try {
@@ -69,6 +75,7 @@ public class PetController {
         }
     }
 
+    @Operation(summary = "Delete a pet by ID", description = "Remove a pet from the system by its unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePet(@PathVariable Long id) {
         try {
