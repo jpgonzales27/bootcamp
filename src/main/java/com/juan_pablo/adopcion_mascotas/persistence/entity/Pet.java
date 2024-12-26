@@ -3,6 +3,7 @@ package com.juan_pablo.adopcion_mascotas.persistence.entity;
 import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +38,7 @@ public class Pet {
     @PositiveOrZero
     private Integer age;
 
-    @NotBlank(message ="{generic.notblank}" )
+    @NotNull(message = "{generic.notnull}")
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
@@ -44,6 +46,6 @@ public class Pet {
     private Boolean available;
 
     @OneToMany(mappedBy = "pet")
-    private List<Adoption> adoptions;
+    private List<Adoption> adoptions  = new ArrayList<>();
 
 }

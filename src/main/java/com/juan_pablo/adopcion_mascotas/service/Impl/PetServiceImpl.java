@@ -11,7 +11,6 @@ import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudReposi
 import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,9 +50,14 @@ public class PetServiceImpl implements PetService {
     @Override
     public Pet updatePetById(Long id, Pet pet) {
         Pet oldPet = this.findPetById(id);
+        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
+                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
+
+        pet.setPetType(petType);
         oldPet.setName(pet.getName());
         oldPet.setAge(pet.getAge());
-        oldPet.setPetType(pet.getPetType());
+        oldPet.setGenre(pet.getGenre());
+        oldPet.setPetType(petType);
         oldPet.setAvailable(pet.getAvailable());
         return petCrudRepository.save(oldPet);
     }
