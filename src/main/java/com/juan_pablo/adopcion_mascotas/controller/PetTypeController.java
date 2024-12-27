@@ -2,7 +2,6 @@ package com.juan_pablo.adopcion_mascotas.controller;
 
 import com.juan_pablo.adopcion_mascotas.dto.response.GetPetTypeDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
-import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.PetType;
 import com.juan_pablo.adopcion_mascotas.service.PetTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,9 +67,6 @@ public class PetTypeController {
         PetTypeModel.add(selfLink, petTypeLink);
 
         return ResponseEntity.ok(PetTypeModel);
-//        String baseUrl = request.getRequestURL().toString();
-//        URI newLocation = URI.create(baseUrl + "/" + petTypeCreated.getId());
-//        return ResponseEntity.created(newLocation).body(petTypeCreated);
     }
 
     @Operation(summary = "Update a pet type by ID", description = "Update the details of an existing pet type by its unique ID.")

@@ -3,6 +3,7 @@ package com.juan_pablo.adopcion_mascotas.persistence.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,11 +22,11 @@ public class Adoption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message ="{generic.notblank}" )
+    @NotNull(message ="{generic.notnull}" )
     @Column(name = "pet_id",nullable = false)
     private Long petId;
 
-    @NotBlank(message ="{generic.notblank}" )
+    @NotNull(message ="{generic.notnull}" )
     @Column(name = "user_id",nullable = false)
     private Long userId;
 
@@ -39,7 +40,7 @@ public class Adoption {
     @JsonIgnore
     private User user;
 
-    @NotBlank(message ="{generic.notblank}" )
+    @NotNull(message ="{generic.notnull}" )
     @Temporal(TemporalType.DATE)
     private Date adoptionDate;
 
