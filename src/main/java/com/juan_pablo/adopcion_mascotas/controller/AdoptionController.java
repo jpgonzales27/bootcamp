@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/adopciones")
 @Tag(name = "Adoptions")
+@Slf4j
 public class AdoptionController {
 
     private final AdoptionService adoptionService;
@@ -36,7 +38,9 @@ public class AdoptionController {
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             Pageable pageable){
+        log.info("Fetching adoptions with filters: exactDate={}, startDate={}, endDate={}", exactDate, startDate, endDate);
         Page<Adoption> adoptionsPage = adoptionService.findAllAdoptions(exactDate, startDate, endDate,pageable);
+        log.info("Found {} adoptions", adoptionsPage.getTotalElements());
         PagedModel<EntityModel<Adoption>> pagedModel = pagedResourcesAssembler.toModel(adoptionsPage);
 
         return ResponseEntity.ok(pagedModel);
@@ -45,14 +49,17 @@ public class AdoptionController {
     @Operation(summary = "Get adoption by ID", description = "Retrieve details of an adoption by its unique ID.")
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<Adoption>> getAdoption(@PathVariable Long id){
+        log.info("Fetching adoption by ID: {}", id);
         try {
             Adoption adoption = adoptionService.findAdoptionById(id);
+            log.info("Successfully fetched adoption: {}", adoption);
             EntityModel<Adoption> adoptionModel = EntityModel.of(adoption);
             Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
             adoptionModel.add(selfLink);
 
             return ResponseEntity.ok(adoptionModel);
         } catch (ObjectNotFoundException e) {
+            log.error("Adoption with ID {} not found", id, e);
             return ResponseEntity.notFound().build();
         }
     }
@@ -60,8 +67,9 @@ public class AdoptionController {
     @Operation(summary = "Create a new adoption", description = "Record a new adoption in the system.")
     @PostMapping()
     public ResponseEntity<EntityModel<Adoption>> createAdoption(@Valid @RequestBody Adoption adoption, HttpServletRequest request) {
-
+        log.info("Creating a new adoption: {}", adoption);
         Adoption adoptionCreated = adoptionService.saveAdoption(adoption);
+        log.info("Successfully created adoption with ID: {}", adoptionCreated.getId());
         EntityModel<Adoption> adoptionModel = EntityModel.of(adoptionCreated);
         Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(adoptionCreated.getId())).withSelfRel();
         adoptionModel.add(selfLink);
@@ -72,24 +80,30 @@ public class AdoptionController {
     @Operation(summary = "Update an adoption by ID", description = "Update the details of an existing adoption by its unique ID.")
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<Adoption>>  updateAdoption(@PathVariable Long id,@Valid @RequestBody Adoption adoption) {
+        log.info("Updating adoption with ID: {}", id);
         try {
             Adoption adoptionUpdated = adoptionService.updateAdoptionById(id, adoption);
+            log.info("Successfully updated adoption with ID: {}", id);
             EntityModel<Adoption> adoptionModel = EntityModel.of(adoptionUpdated);
             Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
             adoptionModel.add(selfLink);
 
             return ResponseEntity.ok(adoptionModel);
         } catch (ObjectNotFoundException e) {
+            log.error("Adoption with ID {} not found for update", id, e);
             return ResponseEntity.notFound().build();
         }
     }
     @Operation(summary = "Delete an adoption by ID", description = "Remove an adoption from the system by its unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdoption(@PathVariable Long id) {
+        log.info("Deleting adoption with ID: {}", id);
         try {
             adoptionService.deleteAdoptionById(id);
+            log.info("Successfully deleted adoption with ID: {}", id);
             return ResponseEntity.noContent().build();
         } catch (ObjectNotFoundException e) {
+            log.error("Adoption with ID {} not found for deletion", id, e);
             return ResponseEntity.notFound().build();
         }
 
