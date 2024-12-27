@@ -1,45 +1,56 @@
 package com.juan_pablo.adopcion_mascotas.controller;
 
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
-import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/usuarios")
 @Tag(name = "Users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final PagedResourcesAssembler<User> pagedResourcesAssembler;
 
     @Operation(summary = "Get all users", description = "Retrieve a paginated list of all users registered in the system.")
     @GetMapping()
-    public ResponseEntity<Page<User>> getUsers(@RequestParam(required = false) String name,
+    public ResponseEntity<PagedModel<EntityModel<User>>> getUsers(@RequestParam(required = false) String name,
                                @RequestParam(required = false) String email,
                                Pageable userPageable) {
-        Page<User> users = userService.findAllUsers(name,email,userPageable);
 
-        return ResponseEntity.ok(users);
+        Page<User> usersPage = userService.findAllUsers(name,email,userPageable);
+        PagedModel<EntityModel<User>> pagedModel = pagedResourcesAssembler.toModel(usersPage);
+
+        return ResponseEntity.ok(pagedModel);
     }
 
     @Operation(summary = "Get user by ID", description = "Retrieve details of a user by their unique ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
+    public ResponseEntity<EntityModel<User>> getUserById(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(userService.findUserById(id));
+            User user = userService.findUserById(id);
+            EntityModel<User> userModel = EntityModel.of(user);
+            Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
+            userModel.add(selfLink);
+
+            return ResponseEntity.ok(userModel);
         } catch (ObjectNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -47,19 +58,25 @@ public class UserController {
 
     @Operation(summary = "Create a new user", description = "Add a new user to the system.")
     @PostMapping()
-    public ResponseEntity<User> createUser(@Valid  @RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<EntityModel<User>> createUser(@Valid  @RequestBody User user, HttpServletRequest request) {
         User userCreated = userService.saveUser(user);
-        String baseUrl = request.getRequestURL().toString();
-        URI newLocation = URI.create(baseUrl + "/" + userCreated.getId());
+        EntityModel<User> userModel = EntityModel.of(userCreated);
+        Link selfLink = linkTo(methodOn(UserController.class).getUserById(userCreated.getId())).withSelfRel();
+        userModel.add(selfLink);
 
-        return ResponseEntity.created(newLocation).body(userCreated);
+        return ResponseEntity.created(linkTo(methodOn(UserController.class).getUserById(userCreated.getId())).toUri()).body(userModel);
     }
 
     @Operation(summary = "Update a user by ID", description = "Update the details of an existing user by their unique ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id,@Valid @RequestBody User user) {
+    public ResponseEntity<EntityModel<User>>  updateUser(@PathVariable Long id,@Valid @RequestBody User user) {
         try {
-            return ResponseEntity.ok(userService.updateUserById(id, user));
+            User userUpdated = userService.updateUserById(id, user);
+            EntityModel<User> userModel = EntityModel.of(userUpdated);
+            Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
+            userModel.add(selfLink);
+
+            return ResponseEntity.ok(userModel);
         } catch (ObjectNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
