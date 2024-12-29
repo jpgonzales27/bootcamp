@@ -78,10 +78,10 @@ public class PetController {
         GetPetDTO petCreated = petService.savePet(pet);
         log.info("Successfully created pet with ID: {}", petCreated.getId());
         EntityModel<GetPetDTO> petModel = EntityModel.of(petCreated);
-        Link selfLink = linkTo(methodOn(UserController.class).getUserById(petCreated.getId())).withSelfRel();
+        Link selfLink = linkTo(methodOn(PetController.class).getPetById(petCreated.getId())).withSelfRel();
         petModel.add(selfLink);
 
-        return ResponseEntity.created(linkTo(methodOn(UserController.class).getUserById(petCreated.getId())).toUri()).body(petModel);
+        return ResponseEntity.created(linkTo(methodOn(PetController.class).getPetById(petCreated.getId())).toUri()).body(petModel);
     }
 
     @Operation(summary = "Update a pet by ID", description = "Update the details of an existing pet by its unique ID.")
@@ -92,7 +92,7 @@ public class PetController {
             Pet petUpdated = petService.updatePetById(id, pet);
             log.info("Successfully updated pet with ID: {}", id);
             EntityModel<Pet> petModel = EntityModel.of(petUpdated);
-            Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
+            Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
             petModel.add(selfLink);
 
             return ResponseEntity.ok(petModel);

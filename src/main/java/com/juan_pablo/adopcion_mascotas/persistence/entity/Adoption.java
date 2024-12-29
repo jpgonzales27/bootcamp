@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -42,6 +43,6 @@ public class Adoption {
 
     @NotNull(message ="{generic.notnull}" )
     @Temporal(TemporalType.DATE)
-    private Date adoptionDate;
+    private LocalDate adoptionDate;
 
 }

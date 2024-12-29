@@ -73,8 +73,7 @@ public class PetTypeController {
         Link selfLink = linkTo(methodOn(PetTypeController.class).getTypeById(petTypeCreated.getId())).withSelfRel();
         Link petTypeLink = linkTo(methodOn(PetTypeController.class).getPetType()).withRel("petTypes");
         PetTypeModel.add(selfLink, petTypeLink);
-
-        return ResponseEntity.ok(PetTypeModel);
+        return ResponseEntity.created(linkTo(methodOn(PetTypeController.class).getTypeById(petTypeCreated.getId())).toUri()).body(PetTypeModel);
     }
 
     @Operation(summary = "Update a pet type by ID", description = "Update the details of an existing pet type by its unique ID.")
