@@ -50,18 +50,13 @@ public class AdoptionController {
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<Adoption>> getAdoption(@PathVariable Long id){
         log.info("Fetching adoption by ID: {}", id);
-        try {
-            Adoption adoption = adoptionService.findAdoptionById(id);
-            log.info("Successfully fetched adoption: {}", adoption);
-            EntityModel<Adoption> adoptionModel = EntityModel.of(adoption);
-            Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
-            adoptionModel.add(selfLink);
+        Adoption adoption = adoptionService.findAdoptionById(id);
+        log.info("Successfully fetched adoption: {}", adoption);
+        EntityModel<Adoption> adoptionModel = EntityModel.of(adoption);
+        Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
+        adoptionModel.add(selfLink);
 
-            return ResponseEntity.ok(adoptionModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Adoption with ID {} not found", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(adoptionModel);
     }
 
     @Operation(summary = "Create a new adoption", description = "Record a new adoption in the system.")
@@ -81,31 +76,21 @@ public class AdoptionController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<Adoption>>  updateAdoption(@PathVariable Long id,@Valid @RequestBody Adoption adoption) {
         log.info("Updating adoption with ID: {}", id);
-        try {
-            Adoption adoptionUpdated = adoptionService.updateAdoptionById(id, adoption);
-            log.info("Successfully updated adoption with ID: {}", id);
-            EntityModel<Adoption> adoptionModel = EntityModel.of(adoptionUpdated);
-            Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
-            adoptionModel.add(selfLink);
+        Adoption adoptionUpdated = adoptionService.updateAdoptionById(id, adoption);
+        log.info("Successfully updated adoption with ID: {}", id);
+        EntityModel<Adoption> adoptionModel = EntityModel.of(adoptionUpdated);
+        Link selfLink = linkTo(methodOn(AdoptionController.class).getAdoption(id)).withSelfRel();
+        adoptionModel.add(selfLink);
 
-            return ResponseEntity.ok(adoptionModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Adoption with ID {} not found for update", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(adoptionModel);
     }
     @Operation(summary = "Delete an adoption by ID", description = "Remove an adoption from the system by its unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdoption(@PathVariable Long id) {
         log.info("Deleting adoption with ID: {}", id);
-        try {
-            adoptionService.deleteAdoptionById(id);
-            log.info("Successfully deleted adoption with ID: {}", id);
-            return ResponseEntity.noContent().build();
-        } catch (ObjectNotFoundException e) {
-            log.error("Adoption with ID {} not found for deletion", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        adoptionService.deleteAdoptionById(id);
+        log.info("Successfully deleted adoption with ID: {}", id);
+        return ResponseEntity.noContent().build();
 
     }
 }

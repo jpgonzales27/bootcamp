@@ -59,18 +59,13 @@ public class PetController {
     @GetMapping("/pet/{id}")
     public ResponseEntity<EntityModel<Pet>> getPetById(@PathVariable Long id) {
         log.info("Fetching pet by ID: {}", id);
-        try {
-            Pet pet = petService.findPetById(id);
-            log.info("Successfully fetched pet: {}", pet);
-            EntityModel<Pet> petModel = EntityModel.of(pet);
-            Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
-            petModel.add(selfLink);
+        Pet pet = petService.findPetById(id);
+        log.info("Successfully fetched pet: {}", pet);
+        EntityModel<Pet> petModel = EntityModel.of(pet);
+        Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
+        petModel.add(selfLink);
 
-            return ResponseEntity.ok(petModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet with ID {} not found", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(petModel);
     }
 
     @Operation(summary = "Create a new pet", description = "Add a new pet to the system.")
@@ -90,31 +85,21 @@ public class PetController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<GetPetDTO>> updatePet(@PathVariable Long id,@Valid @RequestBody Pet pet) {
         log.info("Updating pet with ID: {}", id);
-        try {
-            GetPetDTO petUpdated = petService.updatePetById(id, pet);
-            log.info("Successfully updated pet with ID: {}", id);
-            EntityModel<GetPetDTO> petModel = EntityModel.of(petUpdated);
-            Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
-            petModel.add(selfLink);
+        GetPetDTO petUpdated = petService.updatePetById(id, pet);
+        log.info("Successfully updated pet with ID: {}", id);
+        EntityModel<GetPetDTO> petModel = EntityModel.of(petUpdated);
+        Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
+        petModel.add(selfLink);
 
-            return ResponseEntity.ok(petModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet with ID {} not found for update", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(petModel);
     }
 
     @Operation(summary = "Delete a pet by ID", description = "Remove a pet from the system by its unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePet(@PathVariable Long id) {
         log.info("Deleting pet with ID: {}", id);
-        try {
-            petService.deletePetById(id);
-            log.info("Successfully deleted pet with ID: {}", id);
-            return ResponseEntity.noContent().build();
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet with ID {} not found for deletion", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        petService.deletePetById(id);
+        log.info("Successfully deleted pet with ID: {}", id);
+        return ResponseEntity.noContent().build();
     }
 }

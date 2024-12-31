@@ -50,18 +50,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<User>> getUserById(@PathVariable Long id) {
         log.info("Fetching user by ID: {}", id);
-        try {
-            User user = userService.findUserById(id);
-            log.info("Successfully fetched user: {}", user);
-            EntityModel<User> userModel = EntityModel.of(user);
-            Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
-            userModel.add(selfLink);
+        User user = userService.findUserById(id);
+        log.info("Successfully fetched user: {}", user);
+        EntityModel<User> userModel = EntityModel.of(user);
+        Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
+        userModel.add(selfLink);
 
-            return ResponseEntity.ok(userModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("User with ID {} not found", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(userModel);
     }
 
     @Operation(summary = "Create a new user", description = "Add a new user to the system.")
@@ -81,31 +76,21 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<User>> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
         log.info("Updating user with ID: {}", id);
-        try {
-            User userUpdated = userService.updateUserById(id, user);
-            log.info("Successfully updated user with ID: {}", id);
-            EntityModel<User> userModel = EntityModel.of(userUpdated);
-            Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
-            userModel.add(selfLink);
+        User userUpdated = userService.updateUserById(id, user);
+        log.info("Successfully updated user with ID: {}", id);
+        EntityModel<User> userModel = EntityModel.of(userUpdated);
+        Link selfLink = linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel();
+        userModel.add(selfLink);
 
-            return ResponseEntity.ok(userModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("User with ID {} not found for update", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(userModel);
     }
 
     @Operation(summary = "Delete a user by ID", description = "Remove a user from the system by their unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         log.info("Deleting user with ID: {}", id);
-        try {
-            userService.deleteUserById(id);
-            log.info("Successfully deleted user with ID: {}", id);
-            return ResponseEntity.noContent().build();
-        } catch (ObjectNotFoundException e) {
-            log.error("User with ID {} not found for deletion", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUserById(id);
+        log.info("Successfully deleted user with ID: {}", id);
+        return ResponseEntity.noContent().build();
     }
 }
