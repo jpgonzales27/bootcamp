@@ -12,7 +12,7 @@ public interface PetService {
     Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available, Pageable pageable);
     Pet findPetById( Long id );
     GetPetDTO savePet(Pet pet );
-    Pet updatePetById( Long id, Pet pet );
+    GetPetDTO updatePetById( Long id, Pet pet );
     void deletePetById( Long id );
 
 }

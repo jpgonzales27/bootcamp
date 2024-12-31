@@ -86,12 +86,12 @@ public class PetController {
 
     @Operation(summary = "Update a pet by ID", description = "Update the details of an existing pet by its unique ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<Pet>> updatePet(@PathVariable Long id,@Valid @RequestBody Pet pet) {
+    public ResponseEntity<EntityModel<GetPetDTO>> updatePet(@PathVariable Long id,@Valid @RequestBody Pet pet) {
         log.info("Updating pet with ID: {}", id);
         try {
-            Pet petUpdated = petService.updatePetById(id, pet);
+            GetPetDTO petUpdated = petService.updatePetById(id, pet);
             log.info("Successfully updated pet with ID: {}", id);
-            EntityModel<Pet> petModel = EntityModel.of(petUpdated);
+            EntityModel<GetPetDTO> petModel = EntityModel.of(petUpdated);
             Link selfLink = linkTo(methodOn(PetController.class).getPetById(id)).withSelfRel();
             petModel.add(selfLink);
 

@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
@@ -46,8 +44,6 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public GetPetDTO savePet(Pet pet) {
-//        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
-//                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
         PetType petType = findPetTypeById(pet);
         pet.setPetType(petType);
         Pet result = petCrudRepository.save(pet);
@@ -55,19 +51,17 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Pet updatePetById(Long id, Pet pet) {
-        Pet oldPet = this.findPetById(id);
+    public GetPetDTO updatePetById(Long id, Pet pet) {
         PetType petType = findPetTypeById(pet);
-//        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
-//                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
-
+        Pet oldPet = this.findPetById(id);
         pet.setPetType(petType);
         oldPet.setName(pet.getName());
         oldPet.setAge(pet.getAge());
         oldPet.setGenre(pet.getGenre());
         oldPet.setPetType(petType);
         oldPet.setAvailable(pet.getAvailable());
-        return petCrudRepository.save(oldPet);
+        Pet result = petCrudRepository.save(pet);
+        return PetMapper.INSTANCE.fromEntityToDto(result);
     }
 
     @Override
