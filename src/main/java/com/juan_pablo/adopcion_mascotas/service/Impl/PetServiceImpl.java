@@ -26,8 +26,8 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available, Pageable pageable) {
-        PetSpecifications petSpecifications = new PetSpecifications(name, typeId,typeName, minAge, maxAge,genre, available);
-        return petCrudRepository.findAll(petSpecifications,pageable);
+        PetSpecifications petSpecifications = new PetSpecifications(name, typeId, typeName, minAge, maxAge, genre, available);
+        return petCrudRepository.findAll(petSpecifications, pageable);
     }
 
     @Override
@@ -37,11 +37,18 @@ public class PetServiceImpl implements PetService {
         );
     }
 
+    private PetType findPetTypeById(Pet pet) {
+        Long id = pet.getPetType().getId();
+        return petTypeRepository.findById(id).orElseThrow(
+                () -> new ObjectNotFoundException("[PetType: " + Long.toString(id) + "]")
+        );
+    }
+
     @Override
     public GetPetDTO savePet(Pet pet) {
-        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
-                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
-
+//        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
+//                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
+        PetType petType = findPetTypeById(pet);
         pet.setPetType(petType);
         Pet result = petCrudRepository.save(pet);
         return PetMapper.INSTANCE.fromEntityToDto(result);
@@ -50,8 +57,9 @@ public class PetServiceImpl implements PetService {
     @Override
     public Pet updatePetById(Long id, Pet pet) {
         Pet oldPet = this.findPetById(id);
-        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
-                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
+        PetType petType = findPetTypeById(pet);
+//        PetType petType = petTypeRepository.findById(pet.getPetType().getId())
+//                .orElseThrow(() -> new RuntimeException("Pet Type not found"));
 
         pet.setPetType(petType);
         oldPet.setName(pet.getName());
