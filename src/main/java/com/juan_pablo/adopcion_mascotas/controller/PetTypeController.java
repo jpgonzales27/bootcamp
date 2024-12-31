@@ -48,19 +48,14 @@ public class PetTypeController {
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<PetType>> getTypeById(@PathVariable Long id){
         log.info("Fetching pet type with ID: {}", id);
-        try {
-            PetType petType = petTypeService.findPetTypeById(id);
-            log.info("Successfully fetched pet type: {}", petType);
-            EntityModel<PetType> petTypeModel = EntityModel.of(petType);
-            Link selfLink = linkTo(methodOn(PetTypeController.class).getTypeById(id)).withSelfRel();
-            Link allpetTypeLink = linkTo(methodOn(PetTypeController.class).getPetType()).withRel("petTypes");
-            petTypeModel.add(selfLink, allpetTypeLink);
+        PetType petType = petTypeService.findPetTypeById(id);
+        log.info("Successfully fetched pet type: {}", petType);
+        EntityModel<PetType> petTypeModel = EntityModel.of(petType);
+        Link selfLink = linkTo(methodOn(PetTypeController.class).getTypeById(id)).withSelfRel();
+        Link allpetTypeLink = linkTo(methodOn(PetTypeController.class).getPetType()).withRel("petTypes");
+        petTypeModel.add(selfLink, allpetTypeLink);
 
-            return ResponseEntity.ok(petTypeModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet type with ID {} not found", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(petTypeModel);
     }
 
     @Operation(summary = "Create a new pet type", description = "Add a new pet type to the system.")
@@ -80,31 +75,21 @@ public class PetTypeController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<PetType>> updateType(@PathVariable Long id,@Valid  @RequestBody PetType petType) {
         log.info("Updating pet type with ID: {}", id);
-        try {
-            PetType petTypeUpdate = petTypeService.updatePetTypeById(id, petType);
-            log.info("Successfully updated pet type with ID: {}", id);
-            EntityModel<PetType> petTypeModel = EntityModel.of(petTypeUpdate);
-            Link selfLink = linkTo(methodOn(PetTypeController.class).getTypeById(id)).withSelfRel();
-            petTypeModel.add(selfLink);
+        PetType petTypeUpdate = petTypeService.updatePetTypeById(id, petType);
+        log.info("Successfully updated pet type with ID: {}", id);
+        EntityModel<PetType> petTypeModel = EntityModel.of(petTypeUpdate);
+        Link selfLink = linkTo(methodOn(PetTypeController.class).getTypeById(id)).withSelfRel();
+        petTypeModel.add(selfLink);
 
-            return ResponseEntity.ok(petTypeModel);
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet type with ID {} not found for update", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(petTypeModel);
     }
 
     @Operation(summary = "Delete a pet type by ID", description = "Remove a pet type from the system by its unique ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteType(@PathVariable Long id) {
         log.info("Deleting pet type with ID: {}", id);
-        try {
-            petTypeService.deletePetTypeById(id);
-            log.info("Successfully deleted pet type with ID: {}", id);
-            return ResponseEntity.noContent().build();
-        } catch (ObjectNotFoundException e) {
-            log.error("Pet type with ID {} not found for deletion", id, e);
-            return ResponseEntity.notFound().build();
-        }
+        petTypeService.deletePetTypeById(id);
+        log.info("Successfully deleted pet type with ID: {}", id);
+        return ResponseEntity.noContent().build();
     }
 }
