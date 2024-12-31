@@ -59,9 +59,9 @@ public class PetServiceImpl implements PetService {
         oldPet.setName(pet.getName());
         oldPet.setAge(pet.getAge());
         oldPet.setGenre(pet.getGenre());
-        oldPet.setPetType(petType);
+        oldPet.setPetType(pet.getPetType());
         oldPet.setAvailable(pet.getAvailable());
-        Pet result = petCrudRepository.save(pet);
+        Pet result = petCrudRepository.save(oldPet);
         return PetMapper.INSTANCE.fromEntityToDto(result);
     }
 
