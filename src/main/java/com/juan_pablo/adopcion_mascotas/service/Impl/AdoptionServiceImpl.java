@@ -38,8 +38,8 @@ public class AdoptionServiceImpl implements AdoptionService {
     @Override
     public Adoption updateAdoptionById(Long id, Adoption adoption) {
         Adoption oldAdoption = this.findAdoptionById(id);
-        oldAdoption.setPet(adoption.getPet());
-        oldAdoption.setUser(adoption.getUser());
+        oldAdoption.setPetId(adoption.getPetId());
+        oldAdoption.setUserId(adoption.getUserId());
         oldAdoption.setAdoptionDate(adoption.getAdoptionDate());
         return adoptionCrudRepository.save(oldAdoption);
     }
