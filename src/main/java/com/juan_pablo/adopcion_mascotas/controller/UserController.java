@@ -2,6 +2,7 @@ package com.juan_pablo.adopcion_mascotas.controller;
 
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.searchCriteria.UserSearchCriteria;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +38,8 @@ public class UserController {
                                                                   @RequestParam(required = false) String email,
                                                                   Pageable userPageable) {
         log.info("Fetching users with filters: name={}, email={}", name, email);
-        Page<User> usersPage = userService.findAllUsers(name, email, userPageable);
+        UserSearchCriteria userSearchCriteria = new UserSearchCriteria(name, email);
+        Page<User> usersPage = userService.findAllUsers(userSearchCriteria, userPageable);
         log.info("Found {} users matching the criteria", usersPage.getTotalElements());
         PagedModel<EntityModel<User>> pagedModel = pagedResourcesAssembler.toModel(usersPage);
 
