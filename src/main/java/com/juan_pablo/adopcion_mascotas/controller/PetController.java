@@ -4,6 +4,7 @@ import com.juan_pablo.adopcion_mascotas.dto.response.GetPetDTO;
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.searchCriteria.PetSearchCriteria;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +48,8 @@ public class PetController {
     ) {
         log.info("Fetching pets with filters: name={}, typeId={}, typeName={}, minAge={}, maxAge={}, genre={}, available={}",
                 name, typeId, typeName, minAge, maxAge, genre, available);
-        Page<Pet> pets = petService.findAllPets(name,typeId,typeName,minAge,maxAge,genre,available,petPageable);
+        PetSearchCriteria petSearchCriteria = new PetSearchCriteria(name,typeId,typeName,minAge,maxAge,genre,available);
+        Page<Pet> pets = petService.findAllPets(petSearchCriteria,petPageable);
         log.info("Found {} pets matching the criteria", pets.getTotalElements());
         PagedModel<EntityModel<Pet>> pagedModel = pagedResourcesAssembler.toModel(pets);
 

@@ -2,6 +2,7 @@ package com.juan_pablo.adopcion_mascotas.persistence.specifications;
 
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.searchCriteria.PetSearchCriteria;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -13,22 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PetSpecifications implements Specification<Pet> {
-    private final String name;
-    private final Long typeId;
-    private final String typeName;
-    private final Integer minAge;
-    private final Integer maxAge;
-    private final Genre genre;
-    private final Boolean available;
+    private PetSearchCriteria petSearchCriteria;
 
-    public PetSpecifications(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available) {
-        this.name = name;
-        this.typeId = typeId;
-        this.typeName = typeName;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.genre = genre;
-        this.available = available;
+
+    public PetSpecifications(PetSearchCriteria petSearchCriteria) {
+        this.petSearchCriteria = petSearchCriteria;
     }
 
     @Override
@@ -41,43 +31,43 @@ public class PetSpecifications implements Specification<Pet> {
         List<Predicate> predicates = new ArrayList<>();
 
         // Filtrar por nombre
-        if (StringUtils.hasText(this.name)) {
-            Predicate nameLike = criteriaBuilder.like(root.get("name"), "%" + this.name + "%");
+        if (StringUtils.hasText(this.petSearchCriteria.getName())) {
+            Predicate nameLike = criteriaBuilder.like(root.get("name"), "%" + this.petSearchCriteria.getName() + "%");
             predicates.add(nameLike);
         }
 
         // Filtrar por tipo de mascota (typeId)
-        if (this.typeId != null) {
-            Predicate typeEqual = criteriaBuilder.equal(root.get("petType").get("id"), this.typeId);
+        if (this.petSearchCriteria.getTypeId() != null) {
+            Predicate typeEqual = criteriaBuilder.equal(root.get("petType").get("id"), this.petSearchCriteria.getTypeId());
             predicates.add(typeEqual);
         }
 
         // Filtrar por nombre tipo de mascota (typeName)
-        if (this.typeName != null) {
-            Predicate typeNameEqual = criteriaBuilder.equal(root.get("petType").get("typeName"), this.typeName);
+        if (this.petSearchCriteria.getTypeName() != null) {
+            Predicate typeNameEqual = criteriaBuilder.equal(root.get("petType").get("typeName"), this.petSearchCriteria.getTypeName());
             predicates.add(typeNameEqual);
         }
 
         // Filtrar por rango de edad (minAge y maxAge)
-        if (this.minAge != null) {
-            Predicate ageGreaterThanOrEqual = criteriaBuilder.greaterThanOrEqualTo(root.get("age"), this.minAge);
+        if (this.petSearchCriteria.getMinAge() != null) {
+            Predicate ageGreaterThanOrEqual = criteriaBuilder.greaterThanOrEqualTo(root.get("age"), this.petSearchCriteria.getMinAge());
             predicates.add(ageGreaterThanOrEqual);
         }
 
-        if (this.maxAge != null) {
-            Predicate ageLessThanOrEqual = criteriaBuilder.lessThanOrEqualTo(root.get("age"), this.maxAge);
+        if (this.petSearchCriteria.getMaxAge() != null) {
+            Predicate ageLessThanOrEqual = criteriaBuilder.lessThanOrEqualTo(root.get("age"), this.petSearchCriteria.getMaxAge());
             predicates.add(ageLessThanOrEqual);
         }
 
-        if(genre!=null){
-            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"),this.genre);
+        if (this.petSearchCriteria.getGenre() != null) {
+            Predicate genreEqual = criteriaBuilder.equal(root.get("genre"), this.petSearchCriteria.getGenre());
             //m.genre = "this.genre"
             predicates.add(genreEqual);
         }
 
         // Filtrar por disponibilidad
-        if (this.available != null) {
-            Predicate availableEqual = criteriaBuilder.equal(root.get("available"), this.available);
+        if (this.petSearchCriteria.getAvailable() != null) {
+            Predicate availableEqual = criteriaBuilder.equal(root.get("available"), this.petSearchCriteria.getAvailable());
             predicates.add(availableEqual);
         }
 

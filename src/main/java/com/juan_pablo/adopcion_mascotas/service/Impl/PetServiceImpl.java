@@ -9,6 +9,7 @@ import com.juan_pablo.adopcion_mascotas.persistence.enums.Genre;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.PetTypeCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
+import com.juan_pablo.adopcion_mascotas.persistence.specifications.searchCriteria.PetSearchCriteria;
 import com.juan_pablo.adopcion_mascotas.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,8 +24,8 @@ public class PetServiceImpl implements PetService {
     private final PetTypeCrudRepository petTypeRepository;
 
     @Override
-    public Page<Pet> findAllPets(String name, Long typeId, String typeName, Integer minAge, Integer maxAge, Genre genre, Boolean available, Pageable pageable) {
-        PetSpecifications petSpecifications = new PetSpecifications(name, typeId, typeName, minAge, maxAge, genre, available);
+    public Page<Pet> findAllPets(PetSearchCriteria petSearchCriteria, Pageable pageable) {
+        PetSpecifications petSpecifications = new PetSpecifications(petSearchCriteria);
         return petCrudRepository.findAll(petSpecifications, pageable);
     }
 
