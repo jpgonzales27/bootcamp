@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -53,6 +54,8 @@ public class GlobalExceptionHandler extends RuntimeException  {
             return this.handleHttpRequestMethodNotSupportedException(httpRequestMethodNotSupportedException, request, response, timestamp);
         } else if (exception instanceof HttpMessageNotReadableException httpMessageNotReadableException) {
             return this.handleHttpMessageNotReadableException(httpMessageNotReadableException, request, response, timestamp);
+        } else if (exception instanceof UsernameNotFoundException usernameNotFoundException) {
+            return this.handleUsernameNotFoundException(usernameNotFoundException, request, response, timestamp);
         } else {
             return this.handleException(exception, request, response, timestamp);
 
@@ -176,6 +179,29 @@ public class GlobalExceptionHandler extends RuntimeException  {
                 "Oops! Error reading the HTTP message body. " +
                         "Make sure the request is correctly formatted and contains valid data.",
                 httpMessageNotReadableException.getMessage(),
+                timestamp,
+                null
+        );
+
+        return ResponseEntity.status(httpStatus).body(apiError);
+
+    }
+
+    private ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException  usernameNotFoundException ,
+                                                                           HttpServletRequest request,
+                                                                           HttpServletResponse response,
+                                                                           LocalDateTime timestamp) {
+
+        log.error("UsernameNotFoundException: [{}] - URL: [{}] - Method: [{}]",
+                usernameNotFoundException.getMessage(), request.getRequestURL(), request.getMethod());
+
+        int httpStatus = HttpStatus.BAD_REQUEST.value();
+        ApiError apiError = new ApiError(
+                httpStatus,
+                request.getRequestURL().toString(),
+                request.getMethod(),
+                "User not found",
+                usernameNotFoundException.getMessage(),
                 timestamp,
                 null
         );

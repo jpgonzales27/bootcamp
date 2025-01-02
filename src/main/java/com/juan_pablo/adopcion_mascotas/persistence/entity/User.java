@@ -9,7 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,14 +30,25 @@ public class User {
     private String name;
 
     @Email(message ="{generic.email}")
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String email;
 
-    @Size(min = 0, max = 8,message = "{generic.size}")
+    @NotBlank(message = "{generic.notblank}")
+    private String password;
+
+    @Size(min = 5, max = 8,message = "{generic.size}")
     @Column(nullable = false)
     private String phone;
 
     @OneToMany(mappedBy = "user")
     private List<Adoption> adoptions;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
 }
