@@ -1,5 +1,6 @@
 package com.juan_pablo.adopcion_mascotas.config;
 
+import com.juan_pablo.adopcion_mascotas.persistence.entity.Role;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.UserCrudRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +10,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -29,16 +34,19 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserCrudRepository userRepository) {
         return username -> {
-            var userEntity = userRepository.findByEmail(username)
+
+            System.out.println("username: " + username);
+
+            var userEntity = userRepository.findByEmailWithRoles(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
-            return User.builder()
-                    .username(userEntity.getEmail())
-                    .password(userEntity.getPassword())
-                    .roles(userEntity.getRoles().stream()
-                            .map(role -> "ROLE_" + role.getName()) // Convertir roles a formato esperado por Spring Security
-                            .toArray(String[]::new))
-                    .build();
+            // Convertir roles a SimpleGrantedAuthority
+            var authorities = userEntity.getRoles().stream()
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // Convertir el nombre de rol
+                    .collect(Collectors.toList());
+
+            // Crear y devolver un UserDetails con los roles convertidos
+            return new User(userEntity.getEmail(), userEntity.getPassword(), authorities);
         };
     }
 
