@@ -40,12 +40,10 @@ public class SecurityConfig {
             var userEntity = userRepository.findByEmailWithRoles(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
-            // Convertir roles a SimpleGrantedAuthority
             var authorities = userEntity.getRoles().stream()
                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // Convertir el nombre de rol
                     .collect(Collectors.toList());
 
-            // Crear y devolver un UserDetails con los roles convertidos
             return new User(userEntity.getEmail(), userEntity.getPassword(), authorities);
         };
     }
