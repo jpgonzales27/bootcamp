@@ -1,25 +1,20 @@
 package com.juan_pablo.adopcion_mascotas.service.Impl;
 
 import com.juan_pablo.adopcion_mascotas.exception.ObjectNotFoundException;
-import com.juan_pablo.adopcion_mascotas.persistence.entity.Pet;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.Role;
 import com.juan_pablo.adopcion_mascotas.persistence.entity.User;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.RoleCrudRepository;
 import com.juan_pablo.adopcion_mascotas.persistence.repository.UserCrudRepository;
-import com.juan_pablo.adopcion_mascotas.persistence.specifications.PetSpecifications;
 import com.juan_pablo.adopcion_mascotas.persistence.specifications.UserSpecifications;
 import com.juan_pablo.adopcion_mascotas.persistence.specifications.searchCriteria.UserSearchCriteria;
 import com.juan_pablo.adopcion_mascotas.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,23 +38,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) {
-        // Check if user roles are set
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            throw new IllegalArgumentException("User must have at least one role");
+        List<Role> roles = user.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            throw new IllegalArgumentException("At least one role must be provided");
         }
 
-        Boolean roleExist = roleRepository.findByName(user.getRoles().iterator().next().getName());
-        if (roleExist) {
-            userCrudRepository.save(user);
-        } else {
-            throw new ObjectNotFoundException("[Role: " + user.getRoles().iterator().next().getName() + "]");
-        }
+        List<Role> validatedRoles = roles.stream()
+                .map(role -> roleRepository.findByName(role.getName())
+                        .orElseThrow(() -> new IllegalArgumentException("Role not found: " + role.getName())))
+                .toList();
 
-        for (Role userRole : user.getRoles()) {
-            userRole.getUsers().add(user);
-        }
-
-        return user;
+        user.setRoles(validatedRoles);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userCrudRepository.save(user);
     }
 
     @Override
@@ -67,15 +58,20 @@ public class UserServiceImpl implements UserService {
         User oldUser = this.findUserById(id);
         oldUser.setName(user.getName());
         oldUser.setEmail(user.getEmail());
-        oldUser.setPassword(user.getPassword());
         oldUser.setPhone(user.getPhone());
         oldUser.setAdoptions(user.getAdoptions());
 
-        // Update user roles
-        oldUser.getRoles().clear();
-        for (Role role : user.getRoles()) {
-            oldUser.getRoles().add(role);
-            role.getUsers().add(oldUser);
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            oldUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            oldUser.getRoles().clear();
+            List<Role> validatedRoles = user.getRoles().stream()
+                    .map(role -> roleRepository.findByName(role.getName())
+                            .orElseThrow(() -> new IllegalArgumentException("Role not found: " + role.getName())))
+                    .toList();
+            oldUser.getRoles().addAll(validatedRoles);
         }
 
         return userCrudRepository.save(oldUser);
