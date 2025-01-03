@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Permitir acceso a Swagger
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo accesible para el rol ADMIN
+                        .requestMatchers("/usuarios/**","/actuator/**").hasRole("ADMIN") // Solo accesible para el rol ADMIN
                         .requestMatchers("/mascotas/**", "/adopciones/**").hasAnyRole("ADMIN", "USER") // Acceso para ADMIN y USER
                         .anyRequest().authenticated() // Cualquier otra ruta requiere autenticación
                 )
